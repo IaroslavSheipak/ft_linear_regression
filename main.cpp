@@ -6,42 +6,58 @@
 
 using namespace Eigen;
 
-auto GradientDescent(std::vector<int>x, std::vector<int> y, double lr, int iterations) {
-	std::vector<double> t0tmps(0.), t1tmps(0.);
-	double t0tmp = 0., t1tmp = 0.;
-	double a, b;
+auto GradientDescentIteration(std::vector<double> x, std::vector<double> y, double lr) {
+	double a = 10000.;	
+	double b = 10000.;	
+	double a_gradient = 0.;
+	double b_gradient = 0.;
 
-	for (int iter=0; i<iterations; i++) {
-		auto dt0 = 0;
-		auto dt1 = 0;
-		for (auto i=0; i < x.size(); i++) {
-			dt0 += (a * x[i] + b[i]) - y[i];
-			dt1 += ((a * x[i] + b) - y[i]) * x[i];
-		}
-		t0 -= dt0 * lr;
-		t1 -= dt1 * lr;
 	
+	for (auto iter = 0; iter < 1000; iter++) {	
+		a_gradient = 0.;
+		b_gradient = 0.;
+		for (auto i=0; i < x.size(); i++) {
+			a_gradient += (-2. / x.size()) * x[i] * (y[i] - (b + a*x[i]));
+			b_gradient += (-2. / x.size()) * (y[i] - (b + a*x[i]));
+		}
+		a -= a_gradient * lr;
+		b -= b_gradient * lr;
+		//std::cout << a_gradient << "\t" << b_gradient <<std::endl;
+	}
+	return std::pair(a, b);
 }
 
-auto	MSELoss(std::vector<int> estimatedPrice, std::vector<int> realPrice) {
-	double result = 0.;
-	for (auto i=0; i < estimatedPrice.size(); i++) {
-		result += std::pow((estimatedPrice[i] - realPrice[i]),2);
-	}
-	result /= estimatedPrice.size();
-	return result;
+auto NormalizeData(std::vector<double> data) {
+	std::vector<double> output;
+	double mod = 0.0;
+
+    for (size_t i = 0; i < data.size(); ++i) {
+        mod += data[i] * data[i];
+    }
+
+    double mag = std::sqrt(mod);
+
+    if (mag == 0) {
+        throw std::logic_error("The input vector is a zero vector");
+    }
+
+    for (size_t i = 0; i < data.size(); ++i) {
+        data[i] = data[i] / mag;
+    }
+    return data;
 }
 
 int main() {
 	io::CSVReader<2> in("data/data.csv");
 	in.read_header(io::ignore_extra_column, "km", "price");
-	std::vector<int> kms, prices;
-	int km, price;
+	std::vector<double> kms, prices;
+	double km, price;
 	while(in.read_row(km,  price)){
 			kms.push_back(km);
 			prices.push_back(price);
 	}
-	std::cout << kms[0];
+	auto weights = GradientDescentIteration(NormalizeData(kms), NormalizeData(prices), 0.005);
+	std::cout << weights.first << "\t" << weights.second;
 	Eigen::MatrixXd m(2,2);
 	return 0;
 }
