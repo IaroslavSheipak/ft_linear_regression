@@ -1,30 +1,30 @@
 #include "csv.h"
-#include <Eigen/Dense>
+//#include <Eigen/Dense>
+#include <cmath>
 #include <vector>
 #include <iostream>
 //#include <ranges>
 
-using namespace Eigen;
+//using namespace Eigen;
 
 auto GradientDescentIteration(std::vector<double> x, std::vector<double> y, double lr) {
-	double a = 10000.;	
-	double b = 10000.;	
-	double a_gradient = 0.;
-	double b_gradient = 0.;
+	double theta0_ = 0.;	
+	double theta1_ = 0.;	
+	double size = x.size();
 
-	
-	for (auto iter = 0; iter < 1000; iter++) {	
-		a_gradient = 0.;
-		b_gradient = 0.;
-		for (auto i=0; i < x.size(); i++) {
-			a_gradient += (-2. / x.size()) * x[i] * (y[i] - (b + a*x[i]));
-			b_gradient += (-2. / x.size()) * (y[i] - (b + a*x[i]));
+	for (auto iter = 0; iter < 4000; iter++) {	
+		double tmpT0 = 0.;
+		double tmpT1 = 0.;
+		for (auto i=0; i < size; i++) {
+			double estimatePrice = theta0_ + (theta1_ * x[i]);
+			double error = estimatePrice - y[i];
+			tmpT0 += error;
+			tmpT1 += error * x[i];
 		}
-		a -= a_gradient * lr;
-		b -= b_gradient * lr;
-		//std::cout << a_gradient << "\t" << b_gradient <<std::endl;
+		theta0_ -= lr * tmpT0 / size;
+		theta1_ -= lr * tmpT1 / size;
 	}
-	return std::pair(a, b);
+	return std::pair(theta1_, theta0_);
 }
 
 auto NormalizeData(std::vector<double> data) {
@@ -47,17 +47,23 @@ auto NormalizeData(std::vector<double> data) {
     return data;
 }
 
+auto PredictY(double first, double second, double mileage) {
+	return (first * mileage + second);
+}
+
 int main() {
 	io::CSVReader<2> in("data/data.csv");
 	in.read_header(io::ignore_extra_column, "km", "price");
 	std::vector<double> kms, prices;
 	double km, price;
 	while(in.read_row(km,  price)){
+			//std::cout << km << "\t" << price << std::endl;
 			kms.push_back(km);
 			prices.push_back(price);
 	}
-	auto weights = GradientDescentIteration(NormalizeData(kms), NormalizeData(prices), 0.005);
-	std::cout << weights.first << "\t" << weights.second;
-	Eigen::MatrixXd m(2,2);
+	auto weights = GradientDescentIteration(NormalizeData(kms), prices, 0.02);
+	std::cout << weights.first << "\t" << weights.second << std::endl;
+	std::cout << PredictY(weights.first,weights.second,240000);
+	//Eigen::MatrixXd m(2,2);
 	return 0;
 }
