@@ -1,0 +1,5 @@
+set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_STANDARD 17)
+project(ft_linear_regression LANGUAGES CXX)
+add_executable(linear_rg main.cpp LinearRegression.cpp PlotAutoscale.cpp)

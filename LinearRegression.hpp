@@ -1,31 +1,28 @@
 #pragma once
-#include "LinearRegression.hpp"
 #include "csv.h"
 #include <cmath>
 #include <vector>
 #include <iostream>
-#include "LinearRegression.hpp"
 #include "plot.h"
-#include "utils.h"
-
 
 class LinearRegression {
 	
 	public:
 				LinearRegression(unsigned int iterations, double lr);
-				LinearRegression(LinearRegression const & src);
-				LinearRegression & operator=(LinearRegression const & src);
+				LinearRegression(LinearRegression const & src) = delete;
+				LinearRegression & operator=(LinearRegression const & src) = delete;
 				~LinearRegression();
-		auto	score();
-		void 	fit(std::vector<double> X, std::vector<double> Y);
-		double 	predict(double X);
+		void 	fit(std::vector<double> const X, std::vector<double> const Y);
+		double 	predict(double X, bool normalizeX=true) const;
 		double	coef();
 		double	intercept();
+		double	score(std::vector<double> const & X, std::vector<double> const & Y);
 	private:
-	std::vector<double> 		NormalizeData(std::vector<double> data);
+	std::vector<double> 		NormalizeData(std::vector<double> const & data);
 		double		_lr;
 		unsigned	_iterations;
-		double		_intercept;	
-		double		_coef;
+		double		_intercept {0.};	
+		double		_coef {0.};
 		double		_mag;
 };
+
