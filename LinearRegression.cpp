@@ -30,7 +30,7 @@ void LinearRegression::fit(std::vector<double> const X, std::vector<double> cons
 
 	for (int iter = 0; iter < _iterations; iter++) {	
 		plt::clf();	
-		plt::scatter(X, Y);
+		plt::scatter(X, Y, 5.);
 		plt::plot({*minmax.first, *minmax.second},{predict(*minmax.first), predict(*minmax.second)}, "");
 		plt::pause(std::numeric_limits<double>::epsilon());
 		plt::draw();
