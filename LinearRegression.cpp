@@ -3,7 +3,6 @@
 #include <numeric>
 #include <iostream>
 #include "LinearRegression.hpp"
-#include "PlotAutoscale.hpp"
 #include <unistd.h>
 #include "matplotlibcpp.h"
 namespace plt = matplotlibcpp;
@@ -33,7 +32,7 @@ void LinearRegression::fit(std::vector<double> const X, std::vector<double> cons
 		plt::clf();	
 		plt::scatter(X, Y);
 		plt::plot({*minmax.first, *minmax.second},{predict(*minmax.first), predict(*minmax.second)}, "");
-		plt::pause(0.001);
+		plt::pause(std::numeric_limits<double>::epsilon());
 		plt::draw();
 		
 		std::cout << iter << " iterations. Score: " << score(X, Y) << std::endl;

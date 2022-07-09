@@ -3,7 +3,6 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
-#include "plot.h"
 
 class LinearRegression {
 	

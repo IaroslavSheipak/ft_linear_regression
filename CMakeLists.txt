@@ -19,16 +19,19 @@ FetchContent_GetProperties(matplotlib)
 if(NOT matplotlib_POPULATED)
     FetchContent_Populate(matplotlib)
 endif()
-include_directories(SYSTEM ${matplotlib_SOURCE_DIR})
-add_executable(train  LinearRegression.cpp PlotAutoscale.cpp main_train.cpp)
-
+add_executable(train  LinearRegression.cpp main_train.cpp)
 target_link_libraries(train
     PRIVATE
         ${PYTHON_LIBRARIES}
         Python3::NumPy
 )
+add_executable(predict LinearRegression.cpp main_predict.cpp)
 
-#add_executable(predict main_predict.cpp LinearRegression.cpp PlotAutoscale.cpp)
+target_link_libraries(predict
+    PRIVATE
+        ${PYTHON_LIBRARIES}
+        Python3::NumPy
+)
 
 
 
@@ -36,3 +39,5 @@ target_link_libraries(train
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
+include_directories(SYSTEM ${matplotlib_SOURCE_DIR})
+include_directories(SYSTEM ${matplotlib_SOURCE_DIR})
