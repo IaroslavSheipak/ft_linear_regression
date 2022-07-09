@@ -5,6 +5,8 @@
 #include "LinearRegression.hpp"
 #include "PlotAutoscale.hpp"
 #include <unistd.h>
+#include "matplotlibcpp.h"
+namespace plt = matplotlibcpp;
 
 LinearRegression::LinearRegression(unsigned int iterations, double lr) : 
 	_iterations(iterations), 
@@ -23,19 +25,18 @@ LinearRegression::LinearRegression() :
 	{}
 
 void LinearRegression::fit(std::vector<double> const X, std::vector<double> const Y) {
-	double theta0_ = 0.;	
-	double theta1_ = 0.;	
 	double size = X.size();
-	PlotAutoscale plt(Y, X);
 	auto  X_Normalized = NormalizeData(X);
+	auto minmax = std::minmax_element(X.begin(), X.end());
 
 	for (int iter = 0; iter < _iterations; iter++) {	
+		plt::clf();	
+		plt::scatter(X, Y);
+		plt::plot({*minmax.first, *minmax.second},{predict(*minmax.first), predict(*minmax.second)}, "");
+		plt::pause(0.001);
+		plt::draw();
 		
-		if ((iter % (_iterations / 10)) == 0 || iter == 1) {
-			plt(Y,X, *this);
-			usleep(500000);
-			std::cout << iter << " iterations. Score: " << score(X, Y) << std::endl;
-		}
+		std::cout << iter << " iterations. Score: " << score(X, Y) << std::endl;
 		
 		double tmpT0 = 0.;
 		double tmpT1 = 0.;
